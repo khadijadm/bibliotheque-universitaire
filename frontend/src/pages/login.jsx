@@ -14,17 +14,22 @@ function Login() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async (e) => {
+   const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setError(''); 
+        setError('');
         try {
             const res = await api.post('/auth/login', formData);
+            console.log('✅ Response:', res.data);           // شوف شنو كيرجع
+            console.log('👤 Role:', res.data.user?.role);    // شوف الـ role
             login(res.data);
-            if (res.data.role === 'admin') navigate('/admin');
-            else if (res.data.role === 'professeur') navigate('/professeur');
+            console.log('🔐 Login called');
+            if (res.data.user.role === 'administrateur') navigate('/admin');
+            else if (res.data.user.role === 'professeur') navigate('/professeur');
             else navigate('/etudiant');
+            console.log('🚀 Navigate called');
         } catch (err) {
+            console.log('❌ Error:', err.response?.data);    // شوف الـ error
             setError(err.response?.data?.message || 'Erreur de connexion');
         } finally {
             setLoading(false);
