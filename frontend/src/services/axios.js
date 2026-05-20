@@ -1,13 +1,13 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:5000/api', // L-adresse dial backend Node.js
+    baseURL: 'http://localhost:5000/api', 
     headers: {
         'Content-Type': 'application/json',
     }
 });
 
-// Had l-partie kat-khzn l-token JWT bch dima t-b9ay connectée
+
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {

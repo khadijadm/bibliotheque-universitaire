@@ -3,6 +3,7 @@ import Login from './pages/login';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ProfDashboard from './pages/prof/ProfDashboard';
 import EtudiantDashboard from './pages/etudiant/EtudiantDashboard';
+import Register from './pages/Register';
 import { useAuth } from './context/AuthContext';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -28,7 +29,7 @@ function App() {
             <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route path="/" element={<Navigate to="/login" replace />} />
-
+                <Route path="/register" element={<Register />} />
                 <Route path="/admin" element={
                     <ProtectedRoute allowedRoles={['administrateur']}>
                         <AdminDashboard />

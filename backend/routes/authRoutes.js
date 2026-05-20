@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { register, login } = require('../controllers/authController');
+const { sendVerificationCode, register, login } = require('../controllers/authController');
 
-router.post('/register', register);
+router.post('/send-code', sendVerificationCode);   // Step 1: sendcode
+router.post('/register', register);                 // Step 2: verify + creer compte
 router.post('/login', login);
 
 module.exports = router;

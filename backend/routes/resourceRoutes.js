@@ -7,13 +7,37 @@ const {
   ajouterResource, getResources,
   getResource, modifierResource, supprimerResource
 } = require('../controllers/resourceController');
-
-// Config upload PDF
+const Activite = require('../models/Activite');
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/'),
   filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
 });
 const upload = multer({ storage });
+
+// download resource file
+router.get('/download/:id', protect, async (req, res) => {
+  try {
+    const Resource = require('../models/Resource');
+    const resource = await Resource.findById(req.params.id);
+    if (!resource || !resource.fichier) {
+      return res.status(404).json({ message: 'Fichier non trouvé' });
+    }
+
+    console.log('BEFORE:', resource.telechargements)
+    resource.nbTelechargements += 1;
+    resource.telechargements.push({ utilisateur: req.user.id });
+    await resource.save();
+    await Activite.create({
+      type: 'telechargement',
+      message: `Téléchargement de "${resource.titre}"`,
+      utilisateur: req.user.id
+    });
+    const filePath = path.join(__dirname, '..', 'uploads', resource.fichier);
+    res.download(filePath);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
 router.get('/', protect, getResources);
 router.get('/:id', protect, getResource);

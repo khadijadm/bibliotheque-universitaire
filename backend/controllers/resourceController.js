@@ -1,19 +1,30 @@
 const Resource = require('../models/Resource');
+const Activite = require('../models/Activite');
 
 // Ajouter ressource
 exports.ajouterResource = async (req, res) => {
   try {
-    const { titre, type, description, discipline } = req.body;
+    const { titre, type, description, discipline, auteur } = req.body;
     const fichier = req.file ? req.file.filename : null;
 
     const resource = await Resource.create({
       titre, type, description, discipline,
+      auteur,
+      publie: true,
       fichier,
       ajoutePar: req.user.id
     });
 
+    // ✅ Activite
+    await Activite.create({
+      type: 'ajout',
+      message: `Nouvelle ressource ajoutée : "${titre}"`,
+      utilisateur: req.user.id
+    });
+
     res.status(201).json(resource);
   } catch (error) {
+    console.error('ERROR DETAIL:', error.message);
     res.status(500).json({ message: error.message });
   }
 };
@@ -22,8 +33,7 @@ exports.ajouterResource = async (req, res) => {
 exports.getResources = async (req, res) => {
   try {
     const { search, discipline } = req.query;
-    let filter = { publie: true };
-
+    let filter = {};
     if (search) filter.titre = { $regex: search, $options: 'i' };
     if (discipline) filter.discipline = discipline;
 
@@ -53,9 +63,7 @@ exports.getResource = async (req, res) => {
 exports.modifierResource = async (req, res) => {
   try {
     const resource = await Resource.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
+      req.params.id, req.body, { new: true }
     );
     if (!resource) return res.status(404).json({ message: 'Ressource non trouvée' });
     res.json(resource);
@@ -67,7 +75,16 @@ exports.modifierResource = async (req, res) => {
 // Supprimer ressource
 exports.supprimerResource = async (req, res) => {
   try {
+    const resource = await Resource.findById(req.params.id);
     await Resource.findByIdAndDelete(req.params.id);
+
+    // Activite
+    await Activite.create({
+      type: 'suppression',
+      message: `Ressource supprimée : "${resource?.titre || ''}"`,
+      utilisateur: req.user.id
+    });
+
     res.json({ message: 'Ressource supprimée' });
   } catch (error) {
     res.status(500).json({ message: error.message });

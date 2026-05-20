@@ -6,6 +6,12 @@ const userSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  prenom: { 
+    type: String, 
+    required: true, 
+    trim: true 
+},  
+  filiere: String,
   email: {
     type: String,
     required: true,
@@ -16,6 +22,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  filiere: { 
+    type: String, 
+    default: '' 
+},
   role: {
     type: String,
     enum: ['etudiant', 'professeur', 'administrateur'],
