@@ -23,6 +23,7 @@ function Login() {
             login(res.data);
             if (res.data.user.role === 'administrateur') navigate('/admin');
             else if (res.data.user.role === 'professeur') navigate('/professeur');
+            else if (res.data.user.role === 'bibliothecaire') navigate('/bibliothecaire');
             else navigate('/etudiant');
         } catch (err) {
             setError(err.response?.data?.message || 'Erreur de connexion');
@@ -56,7 +57,7 @@ function Login() {
 
                     {error && (
                         <div className="flex items-center gap-2 bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg mb-5 text-sm">
-                            ❌ {error}
+                            {error}
                         </div>
                     )}
 

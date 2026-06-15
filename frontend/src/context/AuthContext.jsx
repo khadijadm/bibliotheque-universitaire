@@ -9,12 +9,13 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        if (token) {
+        const savedUser = localStorage.getItem('user');  
+        if (token && savedUser) {
             try {
-                const decoded = jwtDecode(token);
-                setUser(decoded);
+                setUser(JSON.parse(savedUser));  
             } catch (error) {
                 localStorage.removeItem('token');
+                localStorage.removeItem('user');
             }
         }
         setLoading(false);
@@ -22,11 +23,13 @@ export const AuthProvider = ({ children }) => {
 
     const login = (data) => {
         localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
         setUser({ ...data.user });
     };
 
     const logout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
         setUser(null);
     };
 

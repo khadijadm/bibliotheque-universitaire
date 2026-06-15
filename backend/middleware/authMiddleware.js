@@ -26,3 +26,17 @@ exports.profOrAdmin = (req, res, next) => {
   }
   next();
 };
+
+exports.bibliothécaireOnly = (req, res, next) => {
+  if (req.user.role !== 'bibliothecaire') {
+    return res.status(403).json({ message: 'Accès réservé au bibliothécaire' });
+  }
+  next();
+};
+
+exports.adminOrBibliothecaire = (req, res, next) => {
+  if (!['administrateur', 'bibliothecaire'].includes(req.user.role)) {
+    return res.status(403).json({ message: 'Accès non autorisé' });
+  }
+  next();
+};

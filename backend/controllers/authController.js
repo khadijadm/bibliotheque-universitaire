@@ -16,13 +16,17 @@ const verificationCodes = {};
 
 exports.sendVerificationCode = async (req, res) => {
     try {
-        const { nom, prenom, email, motDePasse, role, filiere } = req.body;
+        const { nom, prenom, email, motDePasse, role, filiere, specialite, grade } = req.body;
 
         const existUser = await User.findOne({ email });
         if (existUser) return res.status(400).json({ message: 'Email déjà utilisé' });
 
         const code = Math.floor(100000 + Math.random() * 900000).toString();
-        verificationCodes[email] = { code, nom, prenom, motDePasse, role, filiere, expiresAt: Date.now() + 10 * 60 * 1000 };
+        verificationCodes[email] = {
+            code, nom, prenom, motDePasse, role,
+            filiere, specialite, grade,
+            expiresAt: Date.now() + 10 * 60 * 1000
+        };
 
         await transporter.sendMail({
             from: '"Bibliothèque FPT" <khadijadmissi@gmail.com>',
@@ -63,18 +67,24 @@ exports.register = async (req, res) => {
 
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(motDePasse, salt);
+
         const user = await User.create({
             nom: data.nom,
             prenom: data.prenom,
             email,
             motDePasse: hash,
             role: data.role,
-            filiere: data.filiere
+            filiere: data.filiere || '',
+            specialite: data.specialite || '',
+            grade: data.grade || ''
         });
         delete verificationCodes[email];
 
         const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
-        res.status(201).json({ token, user: { id: user._id, nom: user.nom, prenom: user.prenom, email: user.email, role: user.role } });
+        res.status(201).json({
+            token,
+            user: { id: user._id, nom: user.nom, prenom: user.prenom, email: user.email, role: user.role }
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -82,7 +92,7 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        console.log('LOGIN BODY:', req.body)
+        console.log('LOGIN BODY:', req.body);
         const { email, motDePasse } = req.body;
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ message: 'Email ou mot de passe incorrect' });
@@ -91,7 +101,10 @@ exports.login = async (req, res) => {
         if (!isMatch) return res.status(400).json({ message: 'Email ou mot de passe incorrect' });
 
         const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
-        res.json({ token, user: { id: user._id, nom: user.nom, prenom: user.prenom, email: user.email, role: user.role } });
+        res.json({
+            token,
+            user: { id: user._id, nom: user.nom, prenom: user.prenom, email: user.email, role: user.role }
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

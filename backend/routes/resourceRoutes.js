@@ -17,8 +17,10 @@ const upload = multer({ storage });
 // download resource file
 router.get('/download/:id', protect, async (req, res) => {
   try {
+    console.log('DOWNLOAD ID:', req.params.id)
     const Resource = require('../models/Resource');
     const resource = await Resource.findById(req.params.id);
+    console.log('RESOURCE:', resource?.titre)
     if (!resource || !resource.fichier) {
       return res.status(404).json({ message: 'Fichier non trouvé' });
     }

@@ -18,7 +18,7 @@ router.get('/mes-telechargements', protect, async (req, res) => {
 });
 router.get('/', protect, adminOnly, getUsers);
 router.post('/', protect, adminOnly, creerUser);
-router.put('/:id', protect, adminOnly, modifierUser);
+router.put('/:id', protect, modifierUser);
 router.delete('/:id', protect, adminOnly, supprimerUser);
 
 module.exports = router;

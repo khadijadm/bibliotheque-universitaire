@@ -17,6 +17,11 @@ const notificationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Emprunt',
     default: null
+  },
+  demande: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'DemandeEmprunt',
+    default: null
   }
 }, { timestamps: true });
 

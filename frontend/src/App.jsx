@@ -3,6 +3,7 @@ import Login from './pages/login';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ProfDashboard from './pages/prof/ProfDashboard';
 import EtudiantDashboard from './pages/etudiant/EtudiantDashboard';
+import BibliothecaireDashboard from './pages/bibliothecaire/BibliothecaireDashboard';
 import Register from './pages/Register';
 import { useAuth } from './context/AuthContext';
 
@@ -30,6 +31,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/" element={<Navigate to="/login" replace />} />
                 <Route path="/register" element={<Register />} />
+
                 <Route path="/admin" element={
                     <ProtectedRoute allowedRoles={['administrateur']}>
                         <AdminDashboard />
@@ -45,6 +47,12 @@ function App() {
                 <Route path="/etudiant" element={
                     <ProtectedRoute allowedRoles={['etudiant']}>
                         <EtudiantDashboard />
+                    </ProtectedRoute>
+                } />
+
+                <Route path="/bibliothecaire" element={
+                    <ProtectedRoute allowedRoles={['bibliothecaire']}>
+                        <BibliothecaireDashboard />
                     </ProtectedRoute>
                 } />
 

@@ -24,5 +24,15 @@ router.put('/:id', protect, async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
+// Supprimer notification
+router.delete('/:id', protect, async (req, res) => {
+    try {
+        await Notification.findByIdAndDelete(req.params.id)
+        res.json({ message: 'Notification supprimée' })
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+    }
+})
 
 module.exports = router;
+

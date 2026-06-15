@@ -15,7 +15,7 @@ exports.ajouterResource = async (req, res) => {
       ajoutePar: req.user.id
     });
 
-    // ✅ Activite
+    //  Activite
     await Activite.create({
       type: 'ajout',
       message: `Nouvelle ressource ajoutée : "${titre}"`,
